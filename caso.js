@@ -11,7 +11,7 @@
             this.c.width = this.c.width;
             this.c.height = this.c.height;
             this.ctx = this.c.getContext("2d");
-            this.color = "rgba(20,20,20,.7)";
+            this.color = "rgba(20,20,20,1)";
             this.bullets = [];
             this.enemyBullets = [];
             this.enemies = [];
@@ -306,13 +306,16 @@
         this.shootingSpeed = Game.random(30, 80);
         this.movingLeft = Math.random() < 0.5 ? true : false;
         this.color = "hsl(" + Game.random(0, 360) + ", 60%, 50%)";
-
     };
 
 
     Enemy.prototype.draw = function () {
         Game.ctx.fillStyle = this.color;
         Game.ctx.fillRect(this.x, this.y, this.width, this.height);
+        Game.ctx.shadowBlur = 20;
+        Game.ctx.shadowColor = this.color;
+        // Game.ctx.strokeStyle = "hls(" + Game.random(0, 360) + ", 60%, 50%)";
+        // Game.ctx.strokeRect(this.x, this.y, this.width, this.height);
     };
 
 
@@ -320,14 +323,14 @@
         if (this.movingLeft) {
             if (this.x > 0) {
                 this.x -= this.speed;
-                this.y += this.vy;
+                // Math.random()<.5?this.y += this.vy*10: this.y -= this.vy*10;
             } else {
                 this.movingLeft = false;
             }
         } else {
             if (this.x + this.width < Game.c.width) {
                 this.x += this.speed;
-                this.y += this.vy;
+                // Math.random()?this.y += this.vy: this.y -= this.vy;
             } else {
                 this.movingLeft = true;
             }
@@ -380,6 +383,8 @@
 
     EnemyBullet.prototype.draw = function () {
         Game.ctx.fillStyle = this.color;
+        Game.ctx.shadowBlur = 20;
+        Game.ctx.shadowColor = this.color;
         Game.ctx.fillRect(this.x, this.y, this.width, this.height);
     };
 
