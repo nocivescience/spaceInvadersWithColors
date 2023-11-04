@@ -194,13 +194,7 @@
                 Game.currentFrame = Game.requestAnimationFrame.call(window, Game.loop);
             }
         }
-
     };
-
-
-
-
-
 
     var Player = function () {
         this.width = 60;
@@ -214,7 +208,6 @@
         this.color = "white";
     };
 
-
     Player.prototype.die = function () {
         if (Game.life < Game.maxLives) {
             Game.invincibleMode(2000);
@@ -224,7 +217,6 @@
             Game.gameOver();
         }
     };
-
 
     Player.prototype.draw = function () {
         Game.ctx.fillStyle = this.color;

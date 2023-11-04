@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+
+</style>
+
+<body>
+    <canvas id="game" width="600" height="500"></canvas>
+    <script>
+        (function (window) {
+            var Game = {
+                init: function () {
+                    this.c = document.getElementById("game");
+                    this.ctx = this.c.getContext("2d");
+                    this.c.width = 600;
+                    this.c.height = 500;
+                    this.color = "red";
+                    this.x = 0;
+                    this.particles = [];
+                    this.particlesIndex = 0;
+                    this.maxParticles = 10;
+                    this.currentFrame = 0;
+                    this.life = 0;
+                    this.binding();
+                    this.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) { window.setTimeout(callback, 1000 / 60); };
+                    this.loop();
+                },
+                binding: function () {
+                    window.addEventListener("keydown", this.buttonDown);
+                    window.addEventListener("keyup", this.buttonUp);
+                    window.addEventListener("keypress", this.keyPressed);
+                    this.c.addEventListener("click", this.clicked);
+                },
+                clicked: function () {
+                    if (Game.isGameOver) {
+                        Game.init();
+                    } else {
+                        Game.loop();
+                    }
+                },
+
+                keyPressed: function (e) {
+                    if (e.keyCode === 32) {
+                        if (!Game.player.invincible && !Game.oneShot) {
+                            Game.player.shoot();
+                            Game.oneShot = true;
+                        }
+                        if (Game.isGameOver) {
+                            Game.init();
+                        }
+                        e.preventDefault();
+                    }
+                },
+
+                buttonUp: function (e) {
+                    if (e.keyCode === 32) {
+                        Game.shooting = false;
+                        Game.oneShot = false;
+                        e.preventDefault();
+                    }
+                    if (e.keyCode === 37 || e.keyCode === 65) {
+                        Game.player.movingLeft = false;
+                    }
+                    if (e.keyCode === 39 || e.keyCode === 68) {
+                        Game.player.movingRight = false;
+                    }
+                },
+
+                buttonDown: function (e) {
+                    if (e.keyCode === 32) {
+                        Game.shooting = true;
+                    }
+                    if (e.keyCode === 37 || e.keyCode === 65) {
+                        Game.player.movingLeft = true;
+                    }
+                    if (e.keyCode === 39 || e.keyCode === 68) {
+                        Game.player.movingRight = true;
+                    }
+                },
+                random: function (min, max) {
+                    return Math.floor(Math.random() * (max - min + 1) + min);
+                },
+                clear: function () {
+                    this.ctx.fillStyle = Game.color;
+                    this.ctx.fillRect(0, 0, this.c.width, this.c.height);
+                },
+                loop: function () {
+                    if (!Game.paused) {
+                        Game.clear();
+                        for (var i in Game.particles) {
+                            Game.particles[i].draw();
+                        };
+                        Game.currentFrame = Game.requestAnimationFrame.call(window, Game.loop);
+                    }
+                },
+            };
+            var Particle = function (x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = Game.random(-10, 10);
+                this.vy = Game.random(-10, 10);
+                this.color = color || 'orange';
+                Game.particlesIndex[particlesIndex] = this;
+                this.id = Game.particlesIndex;
+                Game.particlesIndex++;
+                this.life = 0;
+                this.gravity = 0.05;
+                this.size = 40;
+                this.maxLife = 100;
+            }
+            Particle.prototype.draw = function () {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += this.gravity;
+                this.size *= .89;
+                Game.ctx.fillStyle = this.color;
+                Game.ctx.fillRect(this.x, this.y, this.size, this.size);
+                this.life++;
+                if (this.life >= this.maxLife) {
+                    delete Game.particles[this.id];
+                }
+            }
+            Game.init();
+        }(window));
+    </script>
+</body>
+
+</html>
